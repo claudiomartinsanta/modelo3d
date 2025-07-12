@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cargar Modelo OBJ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/OBJLoader.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+    #loadButton {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <button id="loadButton">Cargar Modelo</button>
+  <script>
+    // Configuración básica de Three.js
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Luz para iluminar el modelo
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(1, 1, 1).normalize();
+    scene.add(light);
+
+    // Posición inicial de la cámara
+    camera.position.z = 5;
+
+    // Función para cargar un modelo OBJ
+    function loadModel(url) {
+      const loader = new THREE.OBJLoader();
+      loader.load(
+        url,
+        (object) => {
+          scene.add(object);
+          console.log("Modelo cargado correctamente");
+        },
+        (xhr) => {
+          console.log(`Progreso: ${(xhr.loaded / xhr.total) * 100}%`);
+        },
+        (error) => {
+          console.error("Error al cargar el modelo:", error);
+        }
+      );
+    }
+
+    // Evento del botón para cargar el modelo
+    document.getElementById("loadButton").addEventListener("click", () => {
+      const modelUrl = prompt("Introduce la URL del modelo .obj:");
+      if (modelUrl) {
+        loadModel(modelUrl);
+      }
+    });
+
+    // Animación
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
